@@ -6,7 +6,7 @@ A Terraform project that deploys a highly available web server cluster on AWS: a
 
 | Resource | Purpose |
 | --- | --- |
-| `aws_launch_configuration.example` | `t3.micro` instances that serve "Hello, World" with BusyBox on port 8080 |
+| `aws_launch_template.example` | Launch template for `t3.micro` instances that serve "Hello, World" with BusyBox on port 8080 |
 | `aws_autoscaling_group.example` | 2 to 10 instances across the default VPC subnets, using ELB health checks |
 | `aws_lb.example` | Public Application Load Balancer |
 | `aws_lb_listener.http` | HTTP listener on port 80 (returns 404 by default) |
@@ -53,5 +53,4 @@ terraform destroy   # remove everything when finished to avoid charges
 ## Notes
 
 - The AMI `ami-0fb653ca2d3203ac1` is an Ubuntu image in `us-east-2`; change it if you use another region.
-- AWS is retiring launch configurations, so a good next step is to switch to `aws_launch_template`.
 - State is stored locally. For team use, move it to an S3 backend with state locking.

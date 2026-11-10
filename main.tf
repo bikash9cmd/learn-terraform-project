@@ -15,23 +15,23 @@ provider "aws" {
   region = "us-east-2"
 }
 
-resource "aws_launch_configuration" "example" {
-  image_id        = "ami-0fb653ca2d3203ac1"
-  instance_type   = "t3.micro"
-  security_groups = [aws_security_group.instance.id]
+resource "aws_launch_template" "example" {
+  name_prefix            = "terraform-example-"
+  image_id               = "ami-0fb653ca2d3203ac1"
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = [aws_security_group.instance.id]
 
-  user_data = <<-EOF
+  user_data = base64encode(<<-EOF
               #!/bin/bash
               echo "Hello, World" > index.html
               nohup busybox httpd -f -p 8080 &
               EOF
+  )
 
   lifecycle {
     create_before_destroy = true
-    }
-
   }
-
+}
 
 resource "aws_security_group" "instance" {
   name = "terraform-example-instance"
@@ -60,7 +60,16 @@ data "aws_subnets" "default" {
 }
 
 resource "aws_autoscaling_group" "example" {
-  launch_configuration = aws_launch_configuration.example.name
+  launch_template {
+    id      = aws_launch_template.example.id
+    version = aws_launch_template.example.latest_version
+  }
+
+  # Replace running instances when the launch template changes
+  instance_refresh {
+    strategy = "Rolling"
+  }
+
   vpc_zone_identifier  = data.aws_subnets.default.ids
 
   target_group_arns = [aws_lb_target_group.asg.arn]
