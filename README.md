@@ -55,3 +55,7 @@ terraform destroy   # remove everything when finished to avoid charges
 - The AMI `ami-0fb653ca2d3203ac1` is an Ubuntu image in `us-east-2`; change it if you use another region.
 - AWS is retiring launch configurations, so a good next step is to switch to `aws_launch_template`.
 - State is stored locally. For team use, move it to an S3 backend with state locking.
+
+## License
+
+Released under the [MIT License](LICENSE).
